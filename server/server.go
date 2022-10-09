@@ -1,28 +1,28 @@
-package server
+package tcp
 
 import (
-	"fmt"
 	"log"
 	"net"
 
-	"github.com/Lukski175/GO-Exercise5/time"
+	"github.com/Lukski175/TCP/time"
+
+	"google.golang.org/grpc"
 )
 
-func main() {
-	fmt.Println("Input port to listen on...")
-	var port string
-	fmt.Scan(&port)
+type Server struct {
+	time.UnimplementedTimeServiceServer
+}
 
+func main() {
 	// Create listener tcp on port 9080
-	fmt.Printf("Listening on port %s", port)
-	list, err := net.Listen("tcp", ":"+port)
+	list, err := net.Listen("tcp", ":9080")
 	if err != nil {
-		log.Fatalf("Failed to listen on port %s: %v", port, err)
+		log.Fatalf("Failed to listen on port 9080: %v", err)
 	}
 	grpcServer := grpc.NewServer()
 	time.RegisterTimeServiceServer(grpcServer, &Server{})
 
 	if err := grpcServer.Serve(list); err != nil {
-		log.Fatalf("failed to server %v", err)
+		log.Fatalf("failed to serve %v", err)
 	}
 }

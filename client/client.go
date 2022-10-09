@@ -1,28 +1,35 @@
-package client
+package tcp
 
 import (
+	"context"
 	"fmt"
 	"log"
-	"net"
 
-	"github.com/Lukski175/GO-Exercise5/time"
+	"github.com/Lukski175/TCP/time"
+	"google.golang.org/grpc"
 )
 
+type Server struct {
+	time.UnimplementedTimeServiceServer
+}
+
 func main() {
-	fmt.Println("Input port to listen on...")
-	var port string
-	fmt.Scan(&port)
 
-	// Create listener tcp on port 9080
-	fmt.Printf("Listening on port %s", port)
-	list, err := net.Listen("tcp", ":"+port)
+	//Sets up GRPC connection, which we use to simulate TCP on
+	conn, err := grpc.Dial(":9080", grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("Failed to listen on port %s: %v", port, err)
+		log.Fatalf("Could not connect: %s", err)
 	}
-	grpcServer := grpc.NewServer()
-	time.RegisterTimeServiceServer(grpcServer, &Server{})
+	defer conn.Close()
 
-	if err := grpcServer.Serve(list); err != nil {
-		log.Fatalf("failed to server %v", err)
+	c := time.NewTimeServiceClient(conn)
+
+	message := time.TimeRequest{}
+
+	response, err := c.GetTime(context.Background(), &message)
+	if err != nil {
+		log.Fatalf("Error when calling GetTime: %s", err)
 	}
+
+	fmt.Printf("Current time right now: %s\n", response.Reply)
 }
