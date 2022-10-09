@@ -17,8 +17,8 @@ message ack {
 }
 
 message synack {
-    syn synSeq = 1;
-    ack ackSeq = 2;
+    int32 synSeq = 1;
+    int32 ackSeq = 2;
 }
 
 message clientData {

@@ -14,9 +14,11 @@ type Server struct {
 	time.UnimplementedTimeServiceServer
 }
 
-func (s *Server) getSynack(s *time.Syn) (*time.synack, error) {
-	fmt.Printf("Received GetTime request\n")
-	return &time.GetTimeReply{Reply: t.Now().String()}, nil
+var thisSeq = 1
+
+func (s *Server) GetSynack(sy *time.Syn) (*time.synack, error) {
+	fmt.Printf("Server Received first handshake. Sending second handshake")
+	return &time.synack{synSeq: sy.seq + 1, ackSeq: thisSeq + 1}, nil
 }
 
 func main() {
