@@ -2,3 +2,25 @@ syntax = "proto3";
 
 package time;
 option go_package = "https://github.com/Lukski175/TCP;time";
+
+service tcp {
+    rpc getSynack(syn) returns (synack) {}
+    rpc sendAck(ack) returns (ack) {}
+}
+
+message syn {
+    int32 seq = 1;
+}
+
+message ack {
+    int32 seq = 1;
+}
+
+message synack {
+    syn synSeq = 1;
+    ack ackSeq = 2;
+}
+
+message clientData {
+    string message = 1;
+}
