@@ -1,11 +1,11 @@
-package server
+package main
 
 import (
 	"fmt"
 	"log"
 	"net"
 
-	"github.com/Lukski175/TCP/time"
+	time "github.com/Lukski175/TCP/time"
 
 	"google.golang.org/grpc"
 )

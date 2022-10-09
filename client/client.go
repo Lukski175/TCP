@@ -1,10 +1,10 @@
-package client
+package main
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/Lukski175/TCP/time"
+	time "github.com/Lukski175/TCP/time"
 	"google.golang.org/grpc"
 )
 
