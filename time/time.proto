@@ -1,0 +1,4 @@
+syntax = "proto3";
+
+package time;
+option go_package = "https://github.com/Lukski175/TCP;time";
