@@ -1,35 +1,24 @@
-package tcp
+package client
 
 import (
-	"context"
-	"fmt"
 	"log"
 
 	"github.com/Lukski175/TCP/time"
 	"google.golang.org/grpc"
 )
 
-type Server struct {
-	time.UnimplementedTimeServiceServer
-}
-
 func main() {
 
-	//Sets up GRPC connection, which we use to simulate TCP on
+	// Creat a virtual RPC Client Connection on port  9080 WithInsecure (because  of http)
+	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9080", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Could not connect: %s", err)
 	}
+
+	// Defer means: When this function returns, call this method (meaing, one main is done, close connection)
 	defer conn.Close()
 
-	c := time.NewTimeServiceClient(conn)
-
-	message := time.TimeRequest{}
-
-	response, err := c.GetTime(context.Background(), &message)
-	if err != nil {
-		log.Fatalf("Error when calling GetTime: %s", err)
-	}
-
-	fmt.Printf("Current time right now: %s\n", response.Reply)
+	//  Create new Client from generated gRPC code from proto
+	c := time.NewtcpClient(conn)
 }
