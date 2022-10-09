@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"fmt"
@@ -11,12 +11,12 @@ import (
 )
 
 type Server struct {
-	time.UnimplementedTimeServiceServer
+	time.UnimplementedGettcpServer
 }
 
 var thisSeq = 1
 
-func (s *Server) GetSynack(sy *time.Syn) (*time.synack, error) {
+func (s *Server) GetSynack(sy *time.syn) (*time.synack, error) {
 	fmt.Printf("Server Received first handshake. Sending second handshake")
 	return &time.synack{synSeq: sy.seq + 1, ackSeq: thisSeq + 1}, nil
 }
@@ -28,7 +28,7 @@ func main() {
 		log.Fatalf("Failed to listen on port 9080: %v", err)
 	}
 	grpcServer := grpc.NewServer()
-	//time.RegisterTimeServiceServer(grpcServer, &Server{})
+	time.RegistertcpServer(grpcServer, &Server{})
 
 	if err := grpcServer.Serve(list); err != nil {
 		log.Fatalf("failed to serve %v", err)

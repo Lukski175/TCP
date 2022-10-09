@@ -1,11 +1,14 @@
-package main
+package client
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/Lukski175/TCP/time"
 	"google.golang.org/grpc"
 )
+
+var thisSeq = 1
 
 func main() {
 
@@ -21,4 +24,11 @@ func main() {
 
 	//  Create new Client from generated gRPC code from proto
 	c := time.NewtcpClient(conn)
+
+	response, err := c.GetSynack(thisSeq)
+	if err != nil {
+		log.Fatalf("Error when calling GetTime: %s", err)
+	}
+
+	fmt.Printf("Current time right now: %s %d", response.synSeq, response.ackSeq)
 }
