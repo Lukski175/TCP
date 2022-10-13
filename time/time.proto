@@ -9,18 +9,16 @@ service tcp {
 }
 
 message syn {
-    int32 seq = 1;
+    int64 seq = 1;
 }
 
 message ack {
-    int32 seq = 1;
+    int64 seq = 1;
+    int64 ack = 2;
+    string clientData = 3;
 }
 
 message synack {
-    int32 synSeq = 1;
-    int32 ackSeq = 2;
-}
-
-message clientData {
-    string message = 1;
+    int64 synSeq = 1;
+    int64 ackSeq = 2;
 }

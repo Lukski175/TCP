@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"log"
 
-	time "github.com/Lukski175/TCP/time"
+	t "github.com/Lukski175/TCP/time"
 	"google.golang.org/grpc"
 )
 
-var thisSeq int32 = 1
+// Client seq number
+var thisSeq int64 = 1
 
 func main() {
 
@@ -24,12 +25,18 @@ func main() {
 	defer conn.Close()
 
 	//  Create new Client from generated gRPC code from proto
-	c := time.NewTcpClient(conn)
+	c := t.NewTcpClient(conn)
 
-	response, err := c.GetSynack(context.Background(), &time.Syn{Seq: thisSeq})
+	fmt.Printf("Client sending first handshake. Seq: %v\n", thisSeq)
+	response, err := c.GetSynack(context.Background(), &t.Syn{Seq: thisSeq})
 	if err != nil {
-		log.Fatalf("Error when calling GetTime: %s", err)
+		log.Fatalf("Error when calling GetSynack: %s", err)
 	}
 
-	fmt.Printf("Current time right now: %s %d", response.SynSeq, response.AckSeq)
+	fmt.Printf("Client Received second handshake. Syn: %v - Ack: %v \nSending third handshake.\n", response.SynSeq, response.AckSeq)
+	something, err := c.SendAck(context.Background(), &t.Ack{Seq: response.AckSeq + 1, Ack: thisSeq + 1, ClientData: "Some client data"})
+	if err != nil {
+		log.Fatalf("Error when calling SendAck: %s", err)
+	}
+	_ = something
 }

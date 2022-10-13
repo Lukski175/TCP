@@ -1,24 +1,32 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
+	"time"
 
-	time "github.com/Lukski175/TCP/time"
+	t "github.com/Lukski175/TCP/time"
 
 	"google.golang.org/grpc"
 )
 
 type Server struct {
-	time.UnimplementedTcpServer
+	t.UnimplementedTcpServer
 }
 
-var thisSeq int32 = 1
+// Server seq number
+var thisSeq int64 = 5
 
-func (s *Server) GetSynack(sy *time.Syn) (*time.Synack, error) {
-	fmt.Printf("Server Received first handshake. Sending second handshake")
-	return &time.Synack{SynSeq: sy.Seq + 1, AckSeq: thisSeq + 1}, nil
+func (s *Server) GetSynack(ctx context.Context, sy *t.Syn) (*t.Synack, error) {
+	fmt.Printf("Server Received first handshake. Syn: %v \nSending second handshake.\n", sy.Seq)
+	return &t.Synack{SynSeq: thisSeq, AckSeq: sy.Seq + 1}, nil
+}
+
+func (s *Server) SendAck(ctx context.Context, sy *t.Ack) (*t.Ack, error) {
+	fmt.Printf("Server Received third handshake. Syn: %v - Ack: %v - Data: %s\n", sy.Seq, sy.Ack, sy.ClientData)
+	return nil, nil
 }
 
 func main() {
@@ -28,9 +36,11 @@ func main() {
 		log.Fatalf("Failed to listen on port 9080: %v", err)
 	}
 	grpcServer := grpc.NewServer()
-	time.RegisterTcpServer(grpcServer, &Server{})
+	t.RegisterTcpServer(grpcServer, &Server{})
 
 	if err := grpcServer.Serve(list); err != nil {
 		log.Fatalf("failed to serve %v", err)
 	}
+
+	time.Sleep(3 * time.Second)
 }
