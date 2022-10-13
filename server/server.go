@@ -11,14 +11,14 @@ import (
 )
 
 type Server struct {
-	time.UnimplementedGettcpServer
+	time.UnimplementedTcpServer
 }
 
 var thisSeq = 1
 
-func (s *Server) GetSynack(sy *time.syn) (*time.synack, error) {
+func (s *Server) GetSynack(sy *time.Syn) (*time.Synack, error) {
 	fmt.Printf("Server Received first handshake. Sending second handshake")
-	return &time.synack{synSeq: sy.seq + 1, ackSeq: thisSeq + 1}, nil
+	return &time.Synack{SynSeq: sy.Seq + 1, AckSeq: thisSeq + 1}, nil
 }
 
 func main() {
@@ -28,7 +28,7 @@ func main() {
 		log.Fatalf("Failed to listen on port 9080: %v", err)
 	}
 	grpcServer := grpc.NewServer()
-	time.RegistertcpServer(grpcServer, &Server{})
+	time.RegisterTcpServer(grpcServer, &Server{})
 
 	if err := grpcServer.Serve(list); err != nil {
 		log.Fatalf("failed to serve %v", err)

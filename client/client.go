@@ -23,12 +23,12 @@ func main() {
 	defer conn.Close()
 
 	//  Create new Client from generated gRPC code from proto
-	c := time.NewtcpClient(conn)
+	c := time.NewTcpClient(conn)
 
 	response, err := c.GetSynack(thisSeq)
 	if err != nil {
 		log.Fatalf("Error when calling GetTime: %s", err)
 	}
 
-	fmt.Printf("Current time right now: %s %d", response.synSeq, response.ackSeq)
+	fmt.Printf("Current time right now: %s %d", response.SynSeq, response.AckSeq)
 }
