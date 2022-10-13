@@ -14,7 +14,7 @@ type Server struct {
 	time.UnimplementedTcpServer
 }
 
-var thisSeq = 1
+var thisSeq int32 = 1
 
 func (s *Server) GetSynack(sy *time.Syn) (*time.Synack, error) {
 	fmt.Printf("Server Received first handshake. Sending second handshake")

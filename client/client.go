@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -8,7 +9,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-var thisSeq = 1
+var thisSeq int32 = 1
 
 func main() {
 
@@ -25,7 +26,7 @@ func main() {
 	//  Create new Client from generated gRPC code from proto
 	c := time.NewTcpClient(conn)
 
-	response, err := c.GetSynack(thisSeq)
+	response, err := c.GetSynack(context.Background(), &time.Syn{Seq: thisSeq})
 	if err != nil {
 		log.Fatalf("Error when calling GetTime: %s", err)
 	}
